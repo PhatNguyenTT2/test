@@ -53,7 +53,6 @@ const generateId = () => {
 
 app.post('/api/notes', (request, response) => {
   const body = request.body
-
   if (!body.content) {
     return response.status(400).json({
       error: 'content missing'
@@ -79,7 +78,7 @@ app.delete('/api/notes/:id', (request, response) => {
 })
 
 const PORT = process.env.PORT || 3001
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`)
 })
 
