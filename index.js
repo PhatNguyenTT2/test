@@ -1,9 +1,12 @@
-const e = require('express')
+require('dotenv').config()
 const express = require('express')
 const app = express()
-
+const Note = require('./models/note')
 app.use(express.static('dist'))
 app.use(express.json())
+
+const PORT = process.env.PORT
+
 
 let notes = [
   {
@@ -24,12 +27,23 @@ let notes = [
 ]
 
 
-// app.get('/', (request, response) => {
-//   response.send('<h1>Hello World!</h1>')
-// })
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+
+app.use(requestLogger)
+app.use(express.static('dist'))
+app.use(express.json())
+
 
 app.get('/api/notes', (request, response) => {
-  response.json(notes)
+  Note.find({}).then(notes => {
+    response.json(notes)
+  })
 })
 
 app.get('/api/notes/:id', (request, response) => {
@@ -74,7 +88,6 @@ app.delete('/api/notes/:id', (request, response) => {
   response.status(204).end()
 })
 
-const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
